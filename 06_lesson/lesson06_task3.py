@@ -2,30 +2,43 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+import time
 
 # Настройка драйвера
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 try:
-    # Шаг 1: Перейдите на сайт
+    # Переходим на сайт
     driver.get("https://bonigarcia.dev/selenium-webdriver-java/loading-images.html")
     
-    # Шаг 2: Дождитесь загрузки всех картинок
-    # Ждем пока все изображения загрузятся (атрибут complete станет True)
-    images = WebDriverWait(driver, 15).until(
-        EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#image-container img"))
+    # Ждем загрузки всех картинок - ожидаем, что у последней картинки появится атрибут src
+    wait = WebDriverWait(driver, 10)
+    
+    # Ожидаем загрузки последней (4-й) картинки
+    last_image = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "#image-container img:nth-child(4)"))
     )
     
-    # Ждем пока все изображения полностью загрузятся
-    WebDriverWait(driver, 15).until(
-        lambda driver: all(image.get_attribute("complete") for image in images)
+    # Дополнительная проверка - ждем пока у последней картинки появится непустой src
+    wait.until(
+        lambda driver: last_image.get_attribute("src") and len(last_image.get_attribute("src")) > 0
     )
     
-    # Шаг 3: Получите значение атрибута src у 3-й картинки
-    third_image_src = images[2].get_attribute("src")
+    print("Все картинки загружены!")
     
-    # Шаг 4: Выведите значение в консоль
-    print(third_image_src)
+    # Получаем 3-ю картинку (индексация с 1)
+    third_image = driver.find_element(By.CSS_SELECTOR, "#image-container img:nth-child(3)")
+    
+    # Получаем значение атрибута src у 3-й картинки
+    src_value = third_image.get_attribute("src")
+    
+    # Выводим значение в консоль
+    print(f"SRC третьей картинки: {src_value}")
+
+except Exception as e:
+    print(f"Произошла ошибка: {e}")
 
 finally:
     # Закрываем браузер
