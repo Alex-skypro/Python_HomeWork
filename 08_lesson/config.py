@@ -1,9 +1,7 @@
 class Config:
-    BASE_URL = "https://yougile.com/api-v2"
-    # Для наставника: необходимо добавить ваш API токен ниже
-    API_TOKEN = "YOUR_API_TOKEN_HERE"
+    BASE_URL = "https://yougile.com"
+    API_VERSION = "api-v2"
     
-    HEADERS = {
-        "Authorization": f"Bearer {API_TOKEN}",
-        "Content-Type": "application/json"
-    }
+    # Эти данные нужно будет заполнить наставнику
+    API_USER = "your_username_here"  # Заменить на реальный username
+    API_TOKEN = "your_token_here"    # Заменить на реальный токен
